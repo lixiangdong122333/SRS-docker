@@ -1,0 +1,29 @@
+version: '3.8'  # 使用3.8版本，你可以根据需要的特性选择版本
+
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./server.crt:/usr/local/srs/conf/server.crt:ro
+      - ./server.key:/usr/local/srs/conf/server.key:ro
+    depends_on:
+      - srs_backend
+    networks:
+      - my_network
+
+  srs_backend:
+    image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5
+    ports:
+      - "1935:1935"
+      - "1985:1985"
+      - "8080:8080"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
